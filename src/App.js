@@ -128,6 +128,8 @@ export default function App() {
         setError("");
         return;
       }
+      //before we search for a new movie, simply close the previous one from the search bar
+      handleCloseMovie();
       fetchMovies();
       //in this clean up function we can actually return controller.abort
       return function () {
@@ -351,6 +353,22 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
       };
     },
     [title]
+  );
+  //listening up to a keypress event side effect globally
+  useEffect(
+    function () {
+      function callback(e) {
+        if (e.code === "Escape") {
+          onCloseMovie();
+        }
+      }
+      document.addEventListener("keydown", callback);
+      //clean up our event listener
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onCloseMovie]
   );
   return (
     <div className="details">
