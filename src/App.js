@@ -328,6 +328,15 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     },
     [selectedId]
   );
+  //always use different effect for different states;each effect has only one purpose,on thing
+  //changing the title to the currently watched movie
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `Movie|${title}`;
+    },
+    [title]
+  );
   return (
     <div className="details">
       {isLoading ? (
@@ -431,6 +440,10 @@ function WatchedMoviesList({ watched, onDeleteWatched }) {
 
 function WatchedMovie({ movie, onDeleteWatched }) {
   return (
+    //changing th title to the currently watched movie
+    //is a side effect b/se we are intercting with the outside world
+    //we need a useEffect
+    //that happens when we click on movieDetails so that's where we want that useEffect
     <li>
       <img src={movie.poster} alt={`${movie.title} poster`} />
       <h3>{movie.title}</h3>
