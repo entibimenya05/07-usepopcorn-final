@@ -92,13 +92,18 @@ export default function App() {
   }
   useEffect(
     function () {
+      //using the abort controller in the clean up function for http request
+      //AbortController is a browser api and has nothing to do with react
+      const controller = new AbortController();
       async function fetchMovies() {
         try {
           //reset the error
           setError("");
           setIsLoading(true);
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            //in order to connect abortController, we pass in signal property as shown below
+            { signal: controller.signal }
           );
           if (!res.ok)
             throw new Error("Something went wrong with fetching movies");
@@ -109,7 +114,9 @@ export default function App() {
         } catch (err) {
           //console.error(err.message);
           //to display the error on the screen
-          setError(err.message);
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -122,6 +129,10 @@ export default function App() {
         return;
       }
       fetchMovies();
+      //in this clean up function we can actually return controller.abort
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   );
