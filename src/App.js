@@ -334,6 +334,10 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     function () {
       if (!title) return;
       document.title = `Movie|${title}`;
+      //a clean up function is a function that we return from an effect
+      return function () {
+        document.title = "usePopcorn";
+      };
     },
     [title]
   );
